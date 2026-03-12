@@ -1,0 +1,4 @@
+step,items_tested,manually_labeled,auto_labeled,false_positives,notes,timestamp
+1-baseline,2,2,0,0,"Manual label applied successfully; auto not enabled yet","YYYY-MM-DD"
+2-auto,4,0,4,0,"Auto-labeling applied correctly with PAN + context","YYYY-MM-DD"
+3-dlp,6,0,6,1,"DLP enforced: 2 blocked, 1 override, 1 false positive","YYYY-MM-DD"

@@ -12,6 +12,9 @@ Designed to help both **professionals** and **learners** build real skills with 
 - **[Third-Party Risk Management (TPRM) Framework with ISO 27001 and ITIL 4](./topics/third-party-risk-management-iso-iec-27001-2022-itilv4/)**  
   A practical, risk-based framework for assessing third-party vendors before onboarding for secure SaaS ecosystems by ensuring suppliers meet baseline security expectations.
 
+- **[Vulnerability Triage Framework](./topics/vulnerability-triage-framework/)**  
+  A risk-based vulnerability prioritisation framework that moves beyond raw CVSS scores to produce defensible, context-aware remediation decisions for SaaS web application environments.
+
 - **[PCI DSS 4.0 in Microsoft 365/Azure](./topics/pci-dss-azure/)**  
   Step-by-step implementation of sensitivity labels, auto-labelling and DLP policies mapped to PCI DSS 4.0 requirements.
 
