@@ -6,6 +6,9 @@ Designed to help both **professionals** and **learners** build real skills with 
 ---
 
 ## 📂 Topics
+- **[GRC Intelligence Dashboard](https://github.com/sudo-compliance/grc-dashboard)**  
+  A local-first, browser-based compliance tracking dashboard covering nine frameworks — ISO 27001, ISO 42001, NIST CSF 2.0, PCI-DSS v4.0, DORA, CIS Controls v8, SOC 2, UK GDPR and Cyber Essentials — with cross-framework mapping, risk assessment, and evidence tracking. No server or cloud account required.
+
 - **[Secure Service Delivery & Implementation Framework with ISO 27001 and ITIL 4](./topics/iso-iec-27001-2022-itilv4-implementations-framework/)**  
   A structured implementation and transition framework for secure SaaS client onboarding, controlled service transition and audit-ready evidence aligned to ISO/IEC 27001 and ITIL 4.
   
@@ -39,7 +42,7 @@ Designed to help both **professionals** and **learners** build real skills with 
 
 ## 🛠️ Tools & Frameworks
 **Tools:** Microsoft 365 (Microsoft Sentinel, Defender for Endpoint, Purview, Sharepoint, Azure), Wazuh, Splunk, Datadog, Nessus, ServiceNow, Jira, Zendesk, Confluence, AWS, VMware  
-**Frameworks:** ISO 27001, ISO 31000, ISO 27005, NIST CSF, PCI DSS, GDPR, Cyber Essentials  
+**Frameworks:** ISO 27001, ISO 42001, ISO 31000, ISO 27005, NIST CSF, PCI DSS, GDPR, Cyber Essentials  
 **Skills** Security Operations, Incident Detection & Response, Security Awareness, Risk Registers, Third-Party Risk Management (TPRM), Business Continuity Planning, Disaster Recovery, Troubleshooting, Secure Configuration Baselines, IT Service Management, Stakeholder Communication & Reporting, Complex Problem Resolution, Program Delivery, Team Leadership
 
 ---
@@ -51,5 +54,5 @@ Designed to help both **professionals** and **learners** build real skills with 
 ---
 
 <p align="center">
-  <em>“Cybersecurity is about people as much as controls — these labs aim to make it clear, approachable, and actionable.”</em>
+  <em>"Cybersecurity is about people as much as controls — these labs aim to make it clear, approachable, and actionable."</em>
 </p>
