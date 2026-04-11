@@ -589,12 +589,7 @@ marker = "- **[PCI DSS 4.0 in Microsoft 365/Azure]"
 if marker in content:
     content = content.replace(marker, new_entry + marker)
 else:
-    # Fallback: insert before Wazuh entry
-    marker2 = "- **[Wazuh vs Microsoft Sentinel]"
-    if marker2 in content:
-        content = content.replace(marker2, new_entry + marker2)
-    else:
-        print("WARNING: Could not find insertion point. Add manually.")
+    print("WARNING: Could not find insertion point. Add manually.")
 
 with open("README.md", "w") as f:
     f.write(content)

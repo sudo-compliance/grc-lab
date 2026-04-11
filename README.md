@@ -18,11 +18,11 @@ Designed to help both **professionals** and **learners** build real skills with 
 - **[Vulnerability Triage Framework](./topics/vulnerability-triage-framework/)**  
   A risk-based vulnerability prioritisation framework that moves beyond raw CVSS scores to produce defensible, context-aware remediation decisions for SaaS web application environments.
 
+- **[Incident Classification & Escalation Framework](./topics/incident-classification-escalation-framework/)**  
+  A structured incident classification, escalation, and regulatory notification framework for financial services environments under DORA, FCA, and PRA requirements.
+
 - **[PCI DSS 4.0 in Microsoft 365/Azure](./topics/pci-dss-azure/)**  
   Step-by-step implementation of sensitivity labels, auto-labelling and DLP policies mapped to PCI DSS 4.0 requirements.
-
-- **[Wazuh vs Microsoft Sentinel](./topics/wazuh-vs-sentinel/)**  
-  Side-by-side study comparing detection accuracy, analyst workload and cost for SMEs.
 
 ---
 
