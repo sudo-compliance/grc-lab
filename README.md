@@ -21,6 +21,9 @@ Designed to help both **professionals** and **learners** build real skills with 
 - **[Incident Classification & Escalation Framework](./topics/incident-classification-escalation-framework/)**  
   A structured incident classification, escalation, and regulatory notification framework for financial services environments under DORA, FCA, and PRA requirements.
 
+- **[DORA-to-ISO 27001 Compliance Mapping with UK Operational Resilience Overlay](./topics/dora-iso27001-uk-operational-resilience-mapping/)**  
+  Maps DORA's five pillars to ISO 27001:2022 Annex A controls with a UK FCA/PRA operational resilience overlay, identifying gaps for firms operating under both regimes.
+
 - **[PCI DSS 4.0 in Microsoft 365/Azure](./topics/pci-dss-azure/)**  
   Step-by-step implementation of sensitivity labels, auto-labelling and DLP policies mapped to PCI DSS 4.0 requirements.
 
