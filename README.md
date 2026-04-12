@@ -9,6 +9,9 @@ Designed to help both **professionals** and **learners** build real skills with 
 - **[GRC Intelligence Dashboard](https://github.com/sudo-compliance/grc-dashboard)**  
   A local-first, browser-based compliance tracking dashboard covering nine frameworks — ISO 27001, ISO 42001, NIST CSF 2.0, PCI-DSS v4.0, DORA, CIS Controls v8, SOC 2, UK GDPR and Cyber Essentials — with cross-framework mapping, risk assessment, and evidence tracking. No server or cloud account required.
 
+- **[GRC Maturity Assessment Tool](./topics/grc-maturity-assessment-tool/)**  
+  A browser-based, self-contained maturity assessment tool covering 10 GRC domains across 40 questions, aligned to ISO/IEC 27001:2022 Annex A with DORA and UK FCA/PRA Operational Resilience touchpoints. Produces scored output, radar chart, and prioritised improvement recommendations. Nothing stored or transmitted.
+
 - **[Secure Service Delivery & Implementation Framework with ISO 27001 and ITIL 4](./topics/iso-iec-27001-2022-itilv4-implementations-framework/)**  
   A structured implementation and transition framework for secure SaaS client onboarding, controlled service transition and audit-ready evidence aligned to ISO/IEC 27001 and ITIL 4.
   
