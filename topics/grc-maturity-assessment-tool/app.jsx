@@ -1,8 +1,8 @@
-const { useState, useEffect, useCallback } = React;
-const { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } = Recharts;
-const { Moon, Sun, ChevronRight, ChevronLeft, Download, Copy, Check, RotateCcw, Shield, TrendingUp, AlertTriangle } = LucideReact;
+import React, { useState, useEffect, useCallback } from 'react';
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, Cell } from 'recharts';
+import { Moon, Sun, ChevronRight, ChevronLeft, Download, Copy, Check, RotateCcw, Shield, TrendingUp, AlertTriangle } from 'lucide-react';
 
-// ─── Data ────────────────────────────────────────────────────────────────────
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
 const MATURITY_LEVELS = [
   { level: 1, name: 'Initial',     description: 'Ad hoc and reactive. No formalised processes.' },
@@ -137,82 +137,97 @@ const DOMAINS = [
 
 const MATURITY_BAND_LABELS = ['Initial', 'Developing', 'Defined', 'Managed', 'Optimising'];
 const MATURITY_COLORS = {
-  Initial:    '#d62828',
-  Developing: '#e76f51',
+  Initial:    '#e63946',
+  Developing: '#f4845f',
   Defined:    '#e9c46a',
   Managed:    '#2a9d8f',
-  Optimising: '#2d6a4f',
+  Optimising: '#52b788',
 };
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function getMaturityInfo(score) {
-  if (score >= 4.5) return { label: 'Optimising', color: '#2d6a4f', bg: '#1a3d2e', textColor: '#6ee7b7' };
-  if (score >= 3.5) return { label: 'Managed',    color: '#2a9d8f', bg: '#143530', textColor: '#5eead4' };
-  if (score >= 2.5) return { label: 'Defined',    color: '#e9c46a', bg: '#3d3218', textColor: '#fcd34d' };
-  if (score >= 1.5) return { label: 'Developing', color: '#e76f51', bg: '#3d2218', textColor: '#fb923c' };
-  return                     { label: 'Initial',    color: '#d62828', bg: '#3d1010', textColor: '#f87171' };
+  if (score >= 4.5) return { label: 'Optimising', color: '#52b788', bg: 'rgba(82,183,136,0.08)', textColor: '#52b788' };
+  if (score >= 3.5) return { label: 'Managed',    color: '#2a9d8f', bg: 'rgba(42,157,143,0.08)', textColor: '#2a9d8f' };
+  if (score >= 2.5) return { label: 'Defined',    color: '#e9c46a', bg: 'rgba(233,196,106,0.08)', textColor: '#e9c46a' };
+  if (score >= 1.5) return { label: 'Developing', color: '#f4845f', bg: 'rgba(244,132,95,0.08)',  textColor: '#f4845f' };
+  return                     { label: 'Initial',    color: '#e63946', bg: 'rgba(230,57,70,0.08)',   textColor: '#e63946' };
 }
 
-// ─── Component ───────────────────────────────────────────────────────────────
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function GRCMaturityAssessment() {
-  const [currentView,       setCurrentView]       = useState('welcome');
-  const [currentDomainIndex,setCurrentDomainIndex]= useState(0);
-  const [currentQIndex,     setCurrentQIndex]     = useState(0);
-  const [answers,           setAnswers]            = useState({});
-  const [showDomainIntro,   setShowDomainIntro]   = useState(true);
-  const [darkMode,          setDarkMode]           = useState(true);
-  const [copyConfirmed,     setCopyConfirmed]      = useState(false);
-  const [animKey,           setAnimKey]            = useState(0);
+  const [currentView,        setCurrentView]        = useState('welcome');
+  const [currentDomainIndex, setCurrentDomainIndex] = useState(0);
+  const [currentQIndex,      setCurrentQIndex]      = useState(0);
+  const [answers,            setAnswers]             = useState({});
+  const [showDomainIntro,    setShowDomainIntro]    = useState(true);
+  const [darkMode,           setDarkMode]            = useState(true);
+  const [copyConfirmed,      setCopyConfirmed]       = useState(false);
+  const [animKey,            setAnimKey]             = useState(0);
 
-  // Load Google Fonts once
+  // ── Fonts ──
   useEffect(() => {
     const id = 'grc-fonts';
     if (document.getElementById(id)) return;
     const link = document.createElement('link');
-    link.id   = id;
-    link.rel  = 'stylesheet';
-    link.href = 'https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap';
+    link.id  = id;
+    link.rel = 'stylesheet';
+    // Manrope across all weights — 200 for body, 800 for display
+    link.href = 'https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;700;800&display=swap';
     document.head.appendChild(link);
   }, []);
 
-  // ── Tokens ──
+  // ── Design tokens ──
   const T = darkMode ? {
-    bg:        '#0f1117', bgS:  '#1a1d27', card: '#222633',
-    text:      '#e8e6e3', textS:'#9ca3af', accent:'#c9a227',
-    accentDim: '#a3841e', border:'#2d3241', borderBright:'#3d4257',
+    bg:         '#0c0c0c',
+    bgS:        '#141414',
+    bgCard:     '#111111',
+    text:       '#f0ebe0',
+    textS:      '#6b6560',
+    textMid:    '#9e9890',
+    accent:     '#e63946',
+    accentDim:  '#b02d38',
+    border:     '#1e1e1e',
+    borderMid:  '#2a2a2a',
+    rule:       '#1e1e1e',
   } : {
-    bg:        '#faf9f6', bgS:  '#f0ede6', card: '#ffffff',
-    text:      '#1a1a1a', textS:'#6b7280', accent:'#9a7b1c',
-    accentDim: '#7a6015', border:'#d4d0c8', borderBright:'#b8b4aa',
+    bg:         '#f5f0e8',
+    bgS:        '#ece7de',
+    bgCard:     '#ffffff',
+    text:       '#0c0c0c',
+    textS:      '#9e9080',
+    textMid:    '#5a5550',
+    accent:     '#e63946',
+    accentDim:  '#b02d38',
+    border:     '#ddd8ce',
+    borderMid:  '#c8c3b8',
+    rule:       '#ddd8ce',
   };
 
-  const fonts = {
-    mono: "'DM Mono', 'Courier New', monospace",
-    body: "'DM Sans', 'Segoe UI', system-ui, sans-serif",
+  // ── Font families ──
+  const F = {
+    display: "'Manrope', sans-serif",
+    body:    "'Manrope', sans-serif",
   };
 
   // ── Scoring ──
   const getDomainScore = useCallback((di) => {
     const scores = DOMAINS[di].questions.map((_, qi) => answers[`d${di}_q${qi}`] || 0);
     const answered = scores.filter(s => s > 0);
-    return answered.length ? answered.reduce((a,b) => a+b, 0) / answered.length : 0;
+    return answered.length ? answered.reduce((a, b) => a + b, 0) / answered.length : 0;
   }, [answers]);
 
   const getOverallScore = useCallback(() => {
     const ds = DOMAINS.map((_, i) => getDomainScore(i)).filter(s => s > 0);
-    return ds.length ? ds.reduce((a,b) => a+b, 0) / ds.length : 0;
+    return ds.length ? ds.reduce((a, b) => a + b, 0) / ds.length : 0;
   }, [getDomainScore]);
 
-  // global question index (0-based, across all domains)
-  const globalQIndex = DOMAINS.slice(0, currentDomainIndex).reduce((a,d)=>a+d.questions.length,0) + currentQIndex;
-  const totalAnswered = Object.keys(answers).length;
+  const totalAnswered  = Object.keys(answers).length;
+  const answerKey      = (di, qi) => `d${di}_q${qi}`;
+  const currentAnswer  = answers[answerKey(currentDomainIndex, currentQIndex)];
 
   // ── Navigation ──
-  const answerKey = (di, qi) => `d${di}_q${qi}`;
-  const currentAnswer = answers[answerKey(currentDomainIndex, currentQIndex)];
-
   function handleSelectLevel(level) {
     setAnswers(prev => ({ ...prev, [answerKey(currentDomainIndex, currentQIndex)]: level }));
   }
@@ -267,8 +282,8 @@ export default function GRCMaturityAssessment() {
       const s = getDomainScore(i);
       return `  ${d.name}: ${s.toFixed(1)} (${getMaturityInfo(s).label})`;
     }).join('\n');
-    const priorities = [...DOMAINS.map((d,i) => ({ name: d.name, score: getDomainScore(i) }))]
-      .sort((a,b) => a.score - b.score).slice(0,3)
+    const priorities = [...DOMAINS.map((d, i) => ({ name: d.name, score: getDomainScore(i) }))]
+      .sort((a, b) => a.score - b.score).slice(0, 3)
       .map(d => `  - ${d.name}: ${d.score.toFixed(1)}`).join('\n');
     const text = [
       'GRC Maturity Assessment Results',
@@ -317,103 +332,259 @@ export default function GRCMaturityAssessment() {
     URL.revokeObjectURL(url);
   }, [getOverallScore, getDomainScore, answers]);
 
-  // ── Shared styles ──
-  const cardStyle = {
-    background: T.card, border: `1px solid ${T.border}`,
-    borderRadius: 8, padding: '20px 24px',
-  };
+  // ── Shared micro-components ──
+  const canGoBack = currentDomainIndex > 0 ||
+    (!showDomainIntro && currentQIndex > 0) ||
+    (!showDomainIntro && currentQIndex === 0 && currentDomainIndex > 0);
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // GLOBAL STYLES (injected once)
+  // ═══════════════════════════════════════════════════════════════════════════
+  const globalCSS = `
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+    @keyframes barGrow {
+      from { width: 0; }
+    }
+    .grc-level-btn:hover {
+      border-color: ${T.accent} !important;
+    }
+    .grc-primary-btn:hover {
+      opacity: 0.85 !important;
+    }
+    .grc-ghost-btn:hover {
+      border-color: ${T.textMid} !important;
+      color: ${T.text} !important;
+    }
+    .grc-domain-item:hover {
+      border-color: ${T.borderMid} !important;
+      background: ${T.bgS} !important;
+    }
+    * { box-sizing: border-box; }
+    ::selection { background: ${T.accent}; color: #fff; }
+  `;
+
+  // ── Button styles ──
   const btnPrimary = {
-    background: T.accent, color: '#0f1117',
-    fontFamily: fonts.mono, fontWeight: 500, fontSize: 14,
-    border: 'none', borderRadius: 6, padding: '11px 24px',
-    cursor: 'pointer', letterSpacing: '0.03em',
+    fontFamily: F.display,
+    fontWeight: 900,
+    fontSize: 15,
+    letterSpacing: '0.08em',
+    textTransform: 'uppercase',
+    background: T.accent,
+    color: '#fff',
+    border: 'none',
+    padding: '12px 28px',
+    cursor: 'pointer',
     transition: 'opacity 0.15s',
-  };
-  const btnGhost = {
-    background: 'transparent', color: T.textS,
-    fontFamily: fonts.mono, fontWeight: 400, fontSize: 13,
-    border: `1px solid ${T.border}`, borderRadius: 6, padding: '10px 20px',
-    cursor: 'pointer', transition: 'border-color 0.15s, color 0.15s',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 8,
   };
 
-  // ════════════════════════════════════════════════════════════════════════════
+  const btnGhost = {
+    fontFamily: F.body,
+    fontWeight: 300,
+    fontSize: 13,
+    letterSpacing: '0.04em',
+    background: 'transparent',
+    color: T.textMid,
+    border: `1px solid ${T.border}`,
+    padding: '11px 20px',
+    cursor: 'pointer',
+    transition: 'border-color 0.15s, color 0.15s',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: 6,
+  };
+
+  // ── Section label ──
+  const sectionLabel = {
+    fontFamily: F.display,
+    fontWeight: 700,
+    fontSize: 10,
+    letterSpacing: '0.18em',
+    textTransform: 'uppercase',
+    color: T.textS,
+    marginBottom: 20,
+  };
+
+  // ── Horizontal rule ──
+  const HR = () => (
+    <div style={{ height: 1, background: T.rule, margin: '0' }} />
+  );
+
+  // ══════════════════════════════════════════════════════════════════════════
   // VIEW: WELCOME
-  // ════════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
 
   if (currentView === 'welcome') {
     return (
-      <div style={{ background: T.bg, minHeight: '100vh', fontFamily: fonts.body, color: T.text }}>
+      <div style={{ background: T.bg, minHeight: '100vh', fontFamily: F.body, color: T.text }}>
+        <style>{globalCSS}</style>
 
-        {/* Top bar */}
-        <div style={{ display:'flex', justifyContent:'flex-end', padding:'16px 24px' }}>
-          <button onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding:'8px 12px', display:'flex', alignItems:'center', gap:6 }}>
-            {darkMode ? <Sun size={15}/> : <Moon size={15}/>}
-            <span style={{ fontSize:12 }}>{darkMode ? 'Light' : 'Dark'}</span>
+        {/* ── Top strip ── */}
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+          padding: '18px 32px', borderBottom: `1px solid ${T.rule}`,
+        }}>
+          <span style={{
+            fontFamily: F.display, fontWeight: 700, fontSize: 11,
+            letterSpacing: '0.22em', textTransform: 'uppercase', color: T.textS,
+          }}>
+            GRC Lab · Maturity Assessment
+          </span>
+          <button className="grc-ghost-btn" onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding: '7px 14px' }}>
+            {darkMode ? <Sun size={13} /> : <Moon size={13} />}
+            <span style={{ fontSize: 11, letterSpacing: '0.06em' }}>{darkMode ? 'Light' : 'Dark'}</span>
           </button>
         </div>
 
-        <div style={{ maxWidth: 760, margin: '0 auto', padding: '40px 24px 80px' }}>
+        {/* ── Hero ── */}
+        <div style={{ padding: '0 32px', maxWidth: 960, margin: '0 auto' }}>
 
-          {/* Header */}
-          <div style={{ marginBottom: 48 }}>
-            <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-              <Shield size={22} color={T.accent}/>
-              <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.accent, letterSpacing:'0.12em', textTransform:'uppercase' }}>GRC Lab</span>
+          {/* Big editorial title block */}
+          <div style={{
+            padding: '64px 0 0',
+            borderBottom: `1px solid ${T.rule}`,
+            marginBottom: 48,
+            animation: 'slideUp 0.5s ease both',
+          }}>
+            {/* Eyebrow */}
+            <div style={{
+              fontFamily: F.body, fontWeight: 300, fontSize: 13,
+              letterSpacing: '0.06em', color: T.textS,
+              marginBottom: 24,
+              display: 'flex', alignItems: 'center', gap: 10,
+            }}>
+              <Shield size={12} color={T.accent} />
+              <span>ISO/IEC 27001:2022 · DORA · UK FCA/PRA</span>
             </div>
-            <h1 style={{ fontFamily: fonts.mono, fontSize: 'clamp(28px,5vw,42px)', fontWeight:500, margin:'0 0 16px', lineHeight:1.15, color: T.text }}>
-              GRC Maturity<br/>Assessment
-            </h1>
-            <p style={{ fontSize:17, color: T.textS, margin:0, lineHeight:1.65, maxWidth:520 }}>
-              Assess your organisation's security programme maturity across 10 domains in under 15 minutes. Scored output with gap identification and exportable results.
+
+            {/* Main headline — massive Barlow Condensed Black */}
+            <div style={{
+              fontFamily: F.display, fontWeight: 900,
+              fontSize: 'clamp(64px, 12vw, 120px)',
+              lineHeight: 0.9, letterSpacing: '-0.01em',
+              color: T.text, textTransform: 'uppercase',
+              marginBottom: 0,
+            }}>
+              GRC<br />
+              <span style={{ color: T.accent }}>Maturity</span><br />
+              Assessment
+            </div>
+
+            {/* Subhead — Barlow Light */}
+            <p style={{
+              fontFamily: F.body, fontWeight: 300, fontSize: 16,
+              lineHeight: 1.7, color: T.textMid,
+              maxWidth: 520, margin: '32px 0 48px',
+            }}>
+              Assess your organisation's security programme maturity across ten domains
+              in under fifteen minutes. Produces scored output, gap identification,
+              and exportable results.
             </p>
           </div>
 
-          {/* Stats row */}
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12, marginBottom:40 }}>
+          {/* ── Stats row — giant numerals ── */}
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
+            borderBottom: `1px solid ${T.rule}`,
+            marginBottom: 48,
+            animation: 'slideUp 0.5s 0.1s ease both', opacity: 0, animationFillMode: 'forwards',
+          }}>
             {[
-              { value:'10', label:'Domains' },
-              { value:'40', label:'Questions' },
-              { value:'5',  label:'Maturity Levels' },
-            ].map(s => (
-              <div key={s.label} style={{ ...cardStyle, textAlign:'center', padding:'20px 12px' }}>
-                <div style={{ fontFamily: fonts.mono, fontSize:32, fontWeight:500, color: T.accent, marginBottom:4 }}>{s.value}</div>
-                <div style={{ fontSize:12, color: T.textS, letterSpacing:'0.06em', textTransform:'uppercase' }}>{s.label}</div>
+              { value: '10', label: 'Assessment domains' },
+              { value: '40', label: 'Questions total' },
+              { value: '5',  label: 'Maturity levels' },
+            ].map((s, i) => (
+              <div key={s.label} style={{
+                padding: '32px 0 28px',
+                borderRight: i < 2 ? `1px solid ${T.rule}` : 'none',
+                paddingLeft: i > 0 ? 32 : 0,
+              }}>
+                <div style={{
+                  fontFamily: F.display, fontWeight: 900,
+                  fontSize: 'clamp(56px, 8vw, 88px)',
+                  lineHeight: 1, color: T.text,
+                  letterSpacing: '-0.02em',
+                }}>
+                  {s.value}
+                </div>
+                <div style={{
+                  fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                  color: T.textS, marginTop: 6, letterSpacing: '0.04em',
+                }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </div>
 
-          {/* Domain grid */}
-          <div style={{ marginBottom:40 }}>
-            <div style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:14 }}>Assessment Domains</div>
-            <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(220px,1fr))', gap:8 }}>
+          {/* ── Domain list ── */}
+          <div style={{
+            marginBottom: 48,
+            animation: 'slideUp 0.5s 0.2s ease both', opacity: 0, animationFillMode: 'forwards',
+          }}>
+            <div style={{ ...sectionLabel, marginBottom: 16 }}>Assessment Domains</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 0 }}>
               {DOMAINS.map((d, i) => (
-                <div key={d.id} style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', background: T.bgS, borderRadius:6, border:`1px solid ${T.border}` }}>
-                  <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.accentDim, minWidth:20 }}>
-                    {String(i+1).padStart(2,'0')}
+                <div
+                  key={d.id}
+                  className="grc-domain-item"
+                  style={{
+                    display: 'flex', alignItems: 'baseline', gap: 16,
+                    padding: '14px 0',
+                    borderBottom: `1px solid ${T.rule}`,
+                    borderRight: (i % 2 === 0 && i < DOMAINS.length - 1) ? `1px solid ${T.rule}` : 'none',
+                    paddingRight: i % 2 === 0 ? 24 : 0,
+                    paddingLeft: i % 2 === 1 ? 24 : 0,
+                    transition: 'background 0.1s',
+                    cursor: 'default',
+                  }}
+                >
+                  <span style={{
+                    fontFamily: F.display, fontWeight: 900, fontSize: 13,
+                    color: T.accent, minWidth: 24, letterSpacing: '0.04em',
+                  }}>
+                    {String(i + 1).padStart(2, '0')}
                   </span>
-                  <span style={{ fontSize:13, color: T.text }}>{d.name}</span>
+                  <div>
+                    <div style={{ fontFamily: F.body, fontWeight: 400, fontSize: 14, color: T.text }}>
+                      {d.name}
+                    </div>
+                    <div style={{
+                      fontFamily: F.body, fontWeight: 300, fontSize: 11,
+                      color: T.textS, letterSpacing: '0.03em', marginTop: 2,
+                    }}>
+                      {d.isoRef}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Alignment note */}
-          <div style={{ ...cardStyle, background: T.bgS, marginBottom:36, display:'flex', gap:12, alignItems:'flex-start' }}>
-            <TrendingUp size={16} color={T.accent} style={{ marginTop:2, flexShrink:0 }}/>
-            <p style={{ margin:0, fontSize:13, color: T.textS, lineHeight:1.6 }}>
-              Aligned to <strong style={{ color: T.text }}>ISO/IEC 27001:2022</strong> Annex A controls, with touchpoints to <strong style={{ color: T.text }}>DORA</strong> and <strong style={{ color: T.text }}>UK FCA/PRA Operational Resilience</strong> requirements.
-            </p>
-          </div>
-
-          {/* CTA */}
-          <div style={{ display:'flex', flexDirection:'column', alignItems:'flex-start', gap:14 }}>
+          {/* ── CTA ── */}
+          <div style={{
+            paddingBottom: 80,
+            display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 16,
+            animation: 'slideUp 0.5s 0.3s ease both', opacity: 0, animationFillMode: 'forwards',
+          }}>
             <button
+              className="grc-primary-btn"
               onClick={() => setCurrentView('assessment')}
-              style={{ ...btnPrimary, fontSize:15, padding:'14px 32px', display:'flex', alignItems:'center', gap:8 }}
+              style={{ ...btnPrimary, fontSize: 16, padding: '16px 36px' }}
             >
-              Start Assessment <ChevronRight size={16}/>
+              Begin Assessment <ChevronRight size={16} />
             </button>
-            <span style={{ fontSize:12, color: T.textS }}>
+            <span style={{ fontFamily: F.body, fontWeight: 300, fontSize: 12, color: T.textS, letterSpacing: '0.04em' }}>
               All data stays in your browser. Nothing is stored or transmitted.
             </span>
           </div>
@@ -422,332 +593,593 @@ export default function GRCMaturityAssessment() {
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
   // VIEW: ASSESSMENT
-  // ════════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
 
   if (currentView === 'assessment') {
     const domain   = DOMAINS[currentDomainIndex];
     const question = domain.questions[currentQIndex];
     const progressPct = totalAnswered / 40;
-    const canGoBack = currentDomainIndex > 0 || (!showDomainIntro && currentQIndex > 0) || (!showDomainIntro && currentQIndex === 0 && currentDomainIndex > 0);
 
     return (
-      <div style={{ background: T.bg, minHeight:'100vh', fontFamily: fonts.body, color: T.text }}>
+      <div style={{ background: T.bg, minHeight: '100vh', fontFamily: F.body, color: T.text }}>
+        <style>{globalCSS}</style>
 
-        {/* Progress bar */}
-        <div style={{ height:3, background: T.bgS }}>
-          <div style={{ height:'100%', width:`${progressPct*100}%`, background: T.accent, transition:'width 0.4s ease' }}/>
-        </div>
-
-        {/* Progress header */}
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 24px', borderBottom:`1px solid ${T.border}` }}>
-          <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-            <Shield size={16} color={T.accent}/>
-            <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS, letterSpacing:'0.08em' }}>
-              DOMAIN {currentDomainIndex+1}/10
-            </span>
+        {/* ── Top navigation bar ── */}
+        <div style={{ borderBottom: `1px solid ${T.rule}` }}>
+          {/* Progress bar */}
+          <div style={{ height: 2, background: T.bgS }}>
+            <div style={{
+              height: '100%', width: `${progressPct * 100}%`,
+              background: T.accent, transition: 'width 0.5s ease',
+            }} />
           </div>
-          <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS }}>
-            {totalAnswered} / 40 ANSWERED
-          </span>
-          <button onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding:'6px 10px', display:'flex', alignItems:'center', gap:5 }}>
-            {darkMode ? <Sun size={13}/> : <Moon size={13}/>}
-          </button>
+
+          <div style={{
+            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+            padding: '14px 32px',
+          }}>
+            {/* Domain counter */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
+              <span style={{
+                fontFamily: F.display, fontWeight: 900, fontSize: 22,
+                color: T.text, letterSpacing: '-0.01em',
+              }}>
+                {String(currentDomainIndex + 1).padStart(2, '0')}
+              </span>
+              <span style={{
+                fontFamily: F.body, fontWeight: 300, fontSize: 11,
+                color: T.textS, letterSpacing: '0.06em',
+              }}>
+                / 10 DOMAINS
+              </span>
+            </div>
+
+            {/* Answered */}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
+              <span style={{
+                fontFamily: F.display, fontWeight: 900, fontSize: 22, color: T.text,
+              }}>
+                {totalAnswered}
+              </span>
+              <span style={{ fontFamily: F.body, fontWeight: 300, fontSize: 11, color: T.textS, letterSpacing: '0.06em' }}>
+                / 40 ANSWERED
+              </span>
+            </div>
+
+            <button className="grc-ghost-btn" onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding: '7px 14px' }}>
+              {darkMode ? <Sun size={13} /> : <Moon size={13} />}
+            </button>
+          </div>
         </div>
 
-        <div style={{ maxWidth:680, margin:'0 auto', padding:'48px 24px 80px' }}>
+        <div style={{ maxWidth: 700, margin: '0 auto', padding: '56px 32px 80px' }}>
 
-          {/* Domain Intro */}
+          {/* ── Domain intro screen ── */}
           {showDomainIntro ? (
-            <div key={`intro-${currentDomainIndex}`} style={{ animation:'fadeUp 0.3s ease both' }}>
-              <div style={{ fontFamily: fonts.mono, fontSize:11, color: T.accent, letterSpacing:'0.12em', textTransform:'uppercase', marginBottom:8 }}>
-                Domain {currentDomainIndex+1} of 10
+            <div key={`intro-${currentDomainIndex}`} style={{ animation: 'slideUp 0.3s ease both' }}>
+
+              {/* Big domain number */}
+              <div style={{
+                fontFamily: F.display, fontWeight: 900,
+                fontSize: 'clamp(80px, 14vw, 128px)',
+                lineHeight: 1, letterSpacing: '-0.02em',
+                color: T.bgS, marginBottom: -16,
+                userSelect: 'none',
+              }}>
+                {String(currentDomainIndex + 1).padStart(2, '0')}
               </div>
-              <h2 style={{ fontFamily: fonts.mono, fontSize:'clamp(22px,4vw,32px)', fontWeight:500, margin:'0 0 12px', lineHeight:1.2 }}>
-                {domain.name}
-              </h2>
-              <div style={{ display:'inline-block', fontFamily: fonts.mono, fontSize:11, color: T.accentDim, background: T.bgS, border:`1px solid ${T.border}`, borderRadius:4, padding:'4px 10px', marginBottom:16 }}>
+
+              <HR />
+
+              <div style={{ marginTop: 24, marginBottom: 8 }}>
+                <div style={{
+                  fontFamily: F.display, fontWeight: 900,
+                  fontSize: 'clamp(28px, 5vw, 44px)',
+                  lineHeight: 1.05, textTransform: 'uppercase',
+                  letterSpacing: '0.01em', color: T.text,
+                }}>
+                  {domain.name}
+                </div>
+              </div>
+
+              <div style={{
+                display: 'inline-block',
+                fontFamily: F.body, fontWeight: 300, fontSize: 11,
+                letterSpacing: '0.08em', color: T.accent,
+                borderBottom: `1px solid ${T.accent}`,
+                paddingBottom: 2, marginBottom: 20,
+              }}>
                 {domain.isoRef}
               </div>
-              <p style={{ fontSize:15, color: T.textS, lineHeight:1.65, margin:'0 0 40px' }}>{domain.description}</p>
-              <div style={{ ...cardStyle, marginBottom:40, padding:'16px 20px' }}>
-                <div style={{ fontSize:12, color: T.textS, marginBottom:8 }}>Questions in this domain</div>
-                {domain.questions.map((q, qi) => (
-                  <div key={qi} style={{ display:'flex', alignItems:'flex-start', gap:10, padding:'8px 0', borderBottom: qi < domain.questions.length-1 ? `1px solid ${T.border}` : 'none' }}>
-                    <span style={{ fontFamily: fonts.mono, fontSize:11, color: answers[answerKey(currentDomainIndex,qi)] ? T.accent : T.textS, minWidth:18 }}>
-                      {answers[answerKey(currentDomainIndex,qi)] ? '✓' : `Q${qi+1}`}
-                    </span>
-                    <span style={{ fontSize:13, color: answers[answerKey(currentDomainIndex,qi)] ? T.text : T.textS, lineHeight:1.5 }}>{q.text}</span>
-                  </div>
-                ))}
+
+              <p style={{
+                fontFamily: F.body, fontWeight: 300, fontSize: 15,
+                lineHeight: 1.75, color: T.textMid,
+                margin: '0 0 40px',
+              }}>
+                {domain.description}
+              </p>
+
+              {/* Question list preview */}
+              <div style={{ marginBottom: 40 }}>
+                <div style={{ ...sectionLabel }}>Questions in this domain</div>
+                {domain.questions.map((q, qi) => {
+                  const answered = !!answers[answerKey(currentDomainIndex, qi)];
+                  return (
+                    <div key={qi} style={{
+                      display: 'flex', gap: 16, alignItems: 'flex-start',
+                      padding: '14px 0',
+                      borderBottom: qi < domain.questions.length - 1 ? `1px solid ${T.rule}` : 'none',
+                    }}>
+                      <span style={{
+                        fontFamily: F.display, fontWeight: 900, fontSize: 13,
+                        color: answered ? T.accent : T.textS,
+                        minWidth: 22, paddingTop: 2,
+                        letterSpacing: '0.04em',
+                      }}>
+                        {answered ? '✓' : `Q${qi + 1}`}
+                      </span>
+                      <span style={{
+                        fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                        color: answered ? T.text : T.textMid,
+                        lineHeight: 1.6,
+                      }}>
+                        {q.text}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-              <div style={{ display:'flex', gap:12 }}>
+
+              <div style={{ display: 'flex', gap: 12 }}>
                 {canGoBack && (
-                  <button onClick={handleBack} style={{ ...btnGhost, display:'flex', alignItems:'center', gap:6 }}>
-                    <ChevronLeft size={14}/> Back
+                  <button className="grc-ghost-btn" onClick={handleBack} style={btnGhost}>
+                    <ChevronLeft size={14} /> Back
                   </button>
                 )}
-                <button onClick={() => { setShowDomainIntro(false); setAnimKey(k=>k+1); }} style={{ ...btnPrimary, display:'flex', alignItems:'center', gap:6 }}>
-                  Begin Domain <ChevronRight size={14}/>
+                <button
+                  className="grc-primary-btn"
+                  onClick={() => { setShowDomainIntro(false); setAnimKey(k => k + 1); }}
+                  style={btnPrimary}
+                >
+                  Begin Domain <ChevronRight size={14} />
                 </button>
               </div>
             </div>
+
           ) : (
-            /* Question */
-            <div key={`q-${animKey}`} style={{ animation:'fadeUp 0.25s ease both' }}>
-              <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:28 }}>
-                <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS, letterSpacing:'0.08em' }}>
-                  {domain.name.toUpperCase()}
+            /* ── Question screen ── */
+            <div key={`q-${animKey}`} style={{ animation: 'slideUp 0.25s ease both' }}>
+
+              {/* Domain name + question position */}
+              <div style={{
+                display: 'flex', justifyContent: 'space-between',
+                alignItems: 'baseline', marginBottom: 32,
+              }}>
+                <span style={{
+                  fontFamily: F.display, fontWeight: 700, fontSize: 11,
+                  letterSpacing: '0.18em', textTransform: 'uppercase', color: T.textS,
+                }}>
+                  {domain.name}
                 </span>
-                <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS }}>
-                  {currentQIndex+1} / {domain.questions.length}
+                <span style={{
+                  fontFamily: F.display, fontWeight: 900, fontSize: 18,
+                  color: T.textS, letterSpacing: '-0.01em',
+                }}>
+                  {currentQIndex + 1}
+                  <span style={{ fontWeight: 300, fontSize: 14, color: T.textS }}>
+                    &thinsp;/&thinsp;{domain.questions.length}
+                  </span>
                 </span>
               </div>
 
-              <p style={{ fontSize:'clamp(15px,2.5vw,18px)', lineHeight:1.65, margin:'0 0 36px', color: T.text, fontWeight:400 }}>
+              {/* Question text — Barlow Light, generous size */}
+              <p style={{
+                fontFamily: F.body, fontWeight: 300,
+                fontSize: 'clamp(16px, 2.6vw, 21px)',
+                lineHeight: 1.7, margin: '0 0 40px',
+                color: T.text,
+              }}>
                 {question.text}
               </p>
 
-              {/* Maturity level cards */}
-              <div style={{ display:'flex', flexDirection:'column', gap:8, marginBottom:40 }}>
-                {MATURITY_LEVELS.map(ml => {
+              <HR />
+
+              {/* Maturity level options */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 40 }}>
+                {MATURITY_LEVELS.map((ml, idx) => {
                   const selected = currentAnswer === ml.level;
                   return (
                     <button
                       key={ml.level}
+                      className="grc-level-btn"
                       onClick={() => handleSelectLevel(ml.level)}
                       style={{
-                        display:'flex', alignItems:'center', gap:16, textAlign:'left',
-                        padding:'14px 18px', borderRadius:8, cursor:'pointer',
-                        transition:'all 0.15s',
-                        background: selected ? (darkMode ? '#2a2410' : '#fef9e7') : T.card,
-                        border: `1px solid ${selected ? T.accent : T.border}`,
-                        boxShadow: selected ? `0 0 0 1px ${T.accent}20` : 'none',
+                        display: 'flex', alignItems: 'center', gap: 0,
+                        textAlign: 'left', cursor: 'pointer',
+                        background: selected ? (darkMode ? 'rgba(230,57,70,0.06)' : 'rgba(230,57,70,0.04)') : 'transparent',
+                        border: 'none',
+                        borderBottom: `1px solid ${selected ? T.accent : T.rule}`,
+                        borderLeft: `3px solid ${selected ? T.accent : 'transparent'}`,
+                        padding: '20px 20px 20px 20px',
+                        transition: 'all 0.15s',
+                        width: '100%',
                       }}
                     >
+                      {/* Level number — massive bold */}
                       <div style={{
-                        fontFamily: fonts.mono, fontSize:18, fontWeight:500, minWidth:28,
+                        fontFamily: F.display, fontWeight: 900,
+                        fontSize: 40, lineHeight: 1,
                         color: selected ? T.accent : T.textS,
-                        transition:'color 0.15s',
+                        minWidth: 52, letterSpacing: '-0.02em',
+                        transition: 'color 0.15s',
                       }}>
                         {ml.level}
                       </div>
-                      <div style={{ flex:1 }}>
-                        <div style={{ fontFamily: fonts.mono, fontSize:13, fontWeight:500, color: selected ? T.accent : T.text, marginBottom:2 }}>
+
+                      {/* Name + description */}
+                      <div style={{ flex: 1 }}>
+                        <div style={{
+                          fontFamily: F.display, fontWeight: 900,
+                          fontSize: 16, textTransform: 'uppercase',
+                          letterSpacing: '0.08em',
+                          color: selected ? T.accent : T.text,
+                          marginBottom: 3,
+                          transition: 'color 0.15s',
+                        }}>
                           {ml.name}
                         </div>
-                        <div style={{ fontSize:12, color: T.textS, lineHeight:1.5 }}>{ml.description}</div>
+                        <div style={{
+                          fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                          color: T.textS, lineHeight: 1.5,
+                        }}>
+                          {ml.description}
+                        </div>
                       </div>
-                      {selected && <Check size={15} color={T.accent}/>}
+
+                      {selected && (
+                        <Check size={14} color={T.accent} style={{ flexShrink: 0, marginLeft: 12 }} />
+                      )}
                     </button>
                   );
                 })}
               </div>
 
               {/* Navigation */}
-              <div style={{ display:'flex', gap:12 }}>
-                <button onClick={handleBack} style={{ ...btnGhost, display:'flex', alignItems:'center', gap:6 }}>
-                  <ChevronLeft size={14}/> Back
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button className="grc-ghost-btn" onClick={handleBack} style={btnGhost}>
+                  <ChevronLeft size={14} /> Back
                 </button>
                 <button
+                  className="grc-primary-btn"
                   onClick={handleNext}
                   disabled={!currentAnswer}
                   style={{
-                    ...btnPrimary, display:'flex', alignItems:'center', gap:6,
-                    opacity: currentAnswer ? 1 : 0.4, cursor: currentAnswer ? 'pointer' : 'not-allowed',
+                    ...btnPrimary,
+                    opacity: currentAnswer ? 1 : 0.3,
+                    cursor: currentAnswer ? 'pointer' : 'not-allowed',
                   }}
                 >
-                  {currentDomainIndex === DOMAINS.length-1 && currentQIndex === DOMAINS[DOMAINS.length-1].questions.length-1
-                    ? 'View Results' : 'Next'} <ChevronRight size={14}/>
+                  {currentDomainIndex === DOMAINS.length - 1 && currentQIndex === DOMAINS[DOMAINS.length - 1].questions.length - 1
+                    ? 'View Results' : 'Next'}
+                  <ChevronRight size={14} />
                 </button>
               </div>
             </div>
           )}
         </div>
-
-        <style>{`
-          @keyframes fadeUp {
-            from { opacity:0; transform:translateY(12px); }
-            to   { opacity:1; transform:translateY(0); }
-          }
-        `}</style>
       </div>
     );
   }
 
-  // ════════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
   // VIEW: RESULTS
-  // ════════════════════════════════════════════════════════════════════════════
+  // ══════════════════════════════════════════════════════════════════════════
 
   const overall       = getOverallScore();
   const overallInfo   = getMaturityInfo(overall);
   const domainScores  = DOMAINS.map((d, i) => ({ ...d, index: i, score: getDomainScore(i) }));
-  const sortedDomains = [...domainScores].sort((a,b) => a.score - b.score);
+  const sortedDomains = [...domainScores].sort((a, b) => a.score - b.score);
   const priorityDomains = sortedDomains.slice(0, 3);
 
-  // Radar chart data
   const radarData = DOMAINS.map((d, i) => ({
     domain: d.shortName,
     score:  parseFloat(getDomainScore(i).toFixed(2)),
     fullMark: 5,
   }));
 
-  // Distribution data
   const distData = MATURITY_BAND_LABELS.map(label => ({
     label,
     count: domainScores.filter(d => getMaturityInfo(d.score).label === label).length,
     color: MATURITY_COLORS[label],
   }));
 
-  const sectionHead = { fontFamily: fonts.mono, fontSize:11, color: T.textS, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:16 };
-
   return (
-    <div style={{ background: T.bg, minHeight:'100vh', fontFamily: fonts.body, color: T.text }}>
+    <div style={{ background: T.bg, minHeight: '100vh', fontFamily: F.body, color: T.text }}>
+      <style>{globalCSS}</style>
 
-      {/* Top bar */}
-      <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'14px 24px', borderBottom:`1px solid ${T.border}` }}>
-        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-          <Shield size={16} color={T.accent}/>
-          <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS, letterSpacing:'0.08em' }}>GRC MATURITY ASSESSMENT</span>
-        </div>
-        <button onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding:'6px 10px', display:'flex', alignItems:'center', gap:5 }}>
-          {darkMode ? <Sun size={13}/> : <Moon size={13}/>}
+      {/* ── Top bar ── */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        padding: '14px 32px', borderBottom: `1px solid ${T.rule}`,
+      }}>
+        <span style={{
+          fontFamily: F.display, fontWeight: 700, fontSize: 11,
+          letterSpacing: '0.22em', textTransform: 'uppercase', color: T.textS,
+        }}>
+          GRC Lab · Maturity Assessment · Results
+        </span>
+        <button className="grc-ghost-btn" onClick={() => setDarkMode(!darkMode)} style={{ ...btnGhost, padding: '7px 14px' }}>
+          {darkMode ? <Sun size={13} /> : <Moon size={13} />}
         </button>
       </div>
 
-      <div style={{ maxWidth: 860, margin:'0 auto', padding:'48px 24px 80px' }}>
+      <div style={{ maxWidth: 920, margin: '0 auto', padding: '0 32px 80px' }}>
 
-        {/* ── Overall Score ── */}
-        <div style={{ ...cardStyle, display:'flex', flexDirection:'column', alignItems:'flex-start', gap:8, marginBottom:32, position:'relative', overflow:'hidden', animation:'fadeUp 0.4s ease both' }}>
-          <div style={{ sectionHead, ...sectionHead }}>Assessment Complete</div>
-          <div style={{ display:'flex', alignItems:'baseline', gap:16, flexWrap:'wrap' }}>
-            <span style={{ fontFamily: fonts.mono, fontSize:'clamp(52px,10vw,80px)', fontWeight:500, color: T.accent, lineHeight:1 }}>
-              {overall.toFixed(1)}
-            </span>
-            <div>
-              <div style={{ display:'inline-flex', alignItems:'center', gap:6, background: overallInfo.bg, border:`1px solid ${overallInfo.color}`, borderRadius:20, padding:'4px 14px', marginBottom:6 }}>
-                <span style={{ width:7, height:7, borderRadius:'50%', background: overallInfo.color, flexShrink:0 }}/>
-                <span style={{ fontFamily: fonts.mono, fontSize:13, color: overallInfo.color }}>{overallInfo.label}</span>
+        {/* ── Hero score block ── */}
+        <div style={{
+          borderBottom: `1px solid ${T.rule}`,
+          paddingBottom: 0,
+          marginBottom: 56,
+          animation: 'slideUp 0.4s ease both',
+          overflow: 'hidden',
+          position: 'relative',
+        }}>
+          {/* Ghost watermark numeral */}
+          <div style={{
+            position: 'absolute', right: -20, top: -10,
+            fontFamily: F.display, fontWeight: 900,
+            fontSize: 'clamp(180px, 28vw, 280px)',
+            lineHeight: 1, letterSpacing: '-0.04em',
+            color: darkMode ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.04)',
+            userSelect: 'none', pointerEvents: 'none',
+          }}>
+            {overall.toFixed(1)}
+          </div>
+
+          <div style={{ padding: '48px 0 40px', position: 'relative' }}>
+            <div style={{
+              fontFamily: F.display, fontWeight: 700, fontSize: 10,
+              letterSpacing: '0.2em', textTransform: 'uppercase',
+              color: T.textS, marginBottom: 12,
+            }}>
+              Overall Maturity Score
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 24, flexWrap: 'wrap' }}>
+              {/* The giant score */}
+              <div style={{
+                fontFamily: F.display, fontWeight: 900,
+                fontSize: 'clamp(80px, 16vw, 140px)',
+                lineHeight: 1, letterSpacing: '-0.03em',
+                color: overallInfo.color,
+              }}>
+                {overall.toFixed(1)}
               </div>
-              <div style={{ fontSize:13, color: T.textS }}>out of 5.0 · {DOMAINS.length} domains assessed</div>
+
+              <div style={{ paddingBottom: 12 }}>
+                {/* Label badge */}
+                <div style={{
+                  fontFamily: F.display, fontWeight: 900,
+                  fontSize: 28, textTransform: 'uppercase',
+                  letterSpacing: '0.06em', color: overallInfo.color,
+                  marginBottom: 6,
+                }}>
+                  {overallInfo.label}
+                </div>
+                <div style={{
+                  fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                  color: T.textS, letterSpacing: '0.04em',
+                }}>
+                  out of 5.0 &nbsp;·&nbsp; {DOMAINS.length} domains assessed
+                </div>
+              </div>
             </div>
           </div>
-          <div style={{ position:'absolute', right:-20, top:-20, width:160, height:160, borderRadius:'50%', background: `${T.accent}06`, pointerEvents:'none' }}/>
         </div>
 
-        {/* ── Radar Chart ── */}
-        <div style={{ ...cardStyle, marginBottom:32, animation:'fadeUp 0.4s 0.1s ease both', opacity:0, animationFillMode:'forwards' }}>
-          <div style={sectionHead}>Maturity Profile</div>
-          <ResponsiveContainer width="100%" height={360}>
-            <RadarChart data={radarData} margin={{ top:20, right:30, bottom:20, left:30 }}>
-              <PolarGrid stroke={T.border} strokeDasharray="3 3"/>
-              <PolarAngleAxis
-                dataKey="domain"
-                tick={{ fill: T.textS, fontSize:11, fontFamily: fonts.mono }}
-                tickLine={false}
-              />
-              <Radar
-                name="Score" dataKey="score"
-                stroke={T.accent} strokeWidth={2}
-                fill={T.accent} fillOpacity={0.18}
-                dot={{ r:4, fill: T.accent, strokeWidth:0 }}
-              />
-            </RadarChart>
-          </ResponsiveContainer>
-        </div>
+        {/* ── Two-column: Radar + Domain table ── */}
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48,
+          marginBottom: 56, alignItems: 'start',
+          animation: 'slideUp 0.4s 0.1s ease both', opacity: 0, animationFillMode: 'forwards',
+        }}>
+          {/* Radar */}
+          <div>
+            <div style={{ ...sectionLabel }}>Maturity Profile</div>
+            <ResponsiveContainer width="100%" height={300}>
+              <RadarChart data={radarData} margin={{ top: 10, right: 20, bottom: 10, left: 20 }}>
+                <PolarGrid stroke={T.borderMid} strokeDasharray="2 4" />
+                <PolarAngleAxis
+                  dataKey="domain"
+                  tick={{ fill: T.textS, fontSize: 10, fontFamily: F.display, fontWeight: 700, letterSpacing: 1 }}
+                  tickLine={false}
+                />
+                <Radar
+                  name="Score" dataKey="score"
+                  stroke={T.accent} strokeWidth={2}
+                  fill={T.accent} fillOpacity={0.12}
+                  dot={{ r: 3, fill: T.accent, strokeWidth: 0 }}
+                />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
 
-        {/* ── Domain Table ── */}
-        <div style={{ ...cardStyle, marginBottom:32, animation:'fadeUp 0.4s 0.15s ease both', opacity:0, animationFillMode:'forwards' }}>
-          <div style={sectionHead}>Domain Scores — Lowest to Highest</div>
-          <div style={{ display:'flex', flexDirection:'column', gap:0 }}>
+          {/* Domain scores — compact list */}
+          <div>
+            <div style={{ ...sectionLabel }}>Domain Scores</div>
             {sortedDomains.map((d, idx) => {
               const info = getMaturityInfo(d.score);
               const pct  = (d.score / 5) * 100;
               return (
-                <div key={d.id} style={{ display:'grid', gridTemplateColumns:'1fr auto auto', gap:12, alignItems:'center', padding:'12px 0', borderBottom: idx < sortedDomains.length-1 ? `1px solid ${T.border}` : 'none' }}>
+                <div key={d.id} style={{
+                  display: 'grid', gridTemplateColumns: '1fr auto',
+                  gap: 12, alignItems: 'center',
+                  padding: '11px 0',
+                  borderBottom: `1px solid ${T.rule}`,
+                }}>
                   <div>
-                    <div style={{ fontSize:13, color: T.text, marginBottom:4 }}>{d.name}</div>
-                    <div style={{ height:3, background: T.bgS, borderRadius:2, overflow:'hidden' }}>
-                      <div style={{ height:'100%', width:`${pct}%`, background: info.color, borderRadius:2, transition:'width 1s ease' }}/>
+                    <div style={{
+                      fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                      color: T.text, marginBottom: 6,
+                    }}>
+                      {d.name}
+                    </div>
+                    <div style={{ height: 2, background: T.bgS, borderRadius: 1, overflow: 'hidden' }}>
+                      <div style={{
+                        height: '100%', width: `${pct}%`,
+                        background: info.color, borderRadius: 1,
+                        transition: 'width 1s ease',
+                      }} />
                     </div>
                   </div>
-                  <div style={{ fontFamily: fonts.mono, fontSize:16, fontWeight:500, color: info.color, textAlign:'right', minWidth:36 }}>
+                  <div style={{
+                    fontFamily: F.display, fontWeight: 900,
+                    fontSize: 22, letterSpacing: '-0.01em',
+                    color: info.color, minWidth: 40, textAlign: 'right',
+                  }}>
                     {d.score.toFixed(1)}
                   </div>
-                  <div style={{ display:'flex', alignItems:'center', gap:6, background: info.bg, border:`1px solid ${info.color}40`, borderRadius:12, padding:'3px 10px', minWidth:90 }}>
-                    <span style={{ width:6, height:6, borderRadius:'50%', background: info.color, flexShrink:0 }}/>
-                    <span style={{ fontFamily: fonts.mono, fontSize:11, color: info.color }}>{info.label}</span>
-                  </div>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* ── Priority Improvement Areas ── */}
-        <div style={{ marginBottom:32, animation:'fadeUp 0.4s 0.2s ease both', opacity:0, animationFillMode:'forwards' }}>
-          <div style={sectionHead}>Priority Improvement Areas</div>
-          <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
-            {priorityDomains.map((d, idx) => {
-              const info = getMaturityInfo(d.score);
-              const lowQs = d.questions.filter((q, qi) => (answers[answerKey(d.index, qi)] || 0) < 3);
-              return (
-                <div key={d.id} style={{ ...cardStyle, borderLeft:`3px solid ${info.color}`, animation:`fadeUp 0.35s ${0.05*idx}s ease both`, opacity:0, animationFillMode:'forwards' }}>
-                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom: lowQs.length > 0 ? 16 : 0, flexWrap:'wrap', gap:8 }}>
-                    <div>
-                      <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:4 }}>
-                        <AlertTriangle size={14} color={info.color}/>
-                        <span style={{ fontFamily: fonts.mono, fontSize:13, fontWeight:500, color: T.text }}>{d.name}</span>
-                      </div>
-                      <span style={{ fontFamily: fonts.mono, fontSize:11, color: T.textS }}>{d.isoRef}</span>
+        {/* ── Priority improvement areas ── */}
+        <div style={{
+          marginBottom: 56,
+          animation: 'slideUp 0.4s 0.2s ease both', opacity: 0, animationFillMode: 'forwards',
+        }}>
+          <div style={{ ...sectionLabel }}>Priority Improvement Areas</div>
+
+          {priorityDomains.map((d, idx) => {
+            const info  = getMaturityInfo(d.score);
+            const lowQs = d.questions.filter((q, qi) => (answers[answerKey(d.index, qi)] || 0) < 3);
+
+            return (
+              <div key={d.id} style={{
+                marginBottom: 24,
+                borderLeft: `3px solid ${info.color}`,
+                paddingLeft: 24,
+                animation: `slideUp 0.35s ${0.05 * idx}s ease both`,
+                opacity: 0, animationFillMode: 'forwards',
+              }}>
+                {/* Domain header */}
+                <div style={{
+                  display: 'flex', justifyContent: 'space-between',
+                  alignItems: 'baseline', marginBottom: 8, flexWrap: 'wrap', gap: 8,
+                }}>
+                  <div>
+                    <div style={{
+                      fontFamily: F.display, fontWeight: 900, fontSize: 20,
+                      textTransform: 'uppercase', letterSpacing: '0.06em',
+                      color: T.text,
+                    }}>
+                      {d.name}
                     </div>
-                    <span style={{ fontFamily: fonts.mono, fontSize:20, fontWeight:500, color: info.color }}>{d.score.toFixed(1)}</span>
+                    <div style={{
+                      fontFamily: F.body, fontWeight: 300, fontSize: 11,
+                      color: T.textS, letterSpacing: '0.04em', marginTop: 2,
+                    }}>
+                      {d.isoRef}
+                    </div>
                   </div>
-                  {lowQs.length === 0 ? (
-                    <div style={{ display:'flex', alignItems:'center', gap:8, color:'#2d6a4f', fontSize:13 }}>
-                      <Check size={14}/> No critical gaps identified in this domain.
-                    </div>
-                  ) : lowQs.map((q, qi) => {
-                    const qIdx = d.questions.indexOf(q);
-                    const score = answers[answerKey(d.index, qIdx)] || 0;
-                    const scoreInfo = getMaturityInfo(score);
-                    return (
-                      <div key={q.id} style={{ marginBottom: qi < lowQs.length-1 ? 14 : 0 }}>
-                        <div style={{ display:'flex', gap:10, marginBottom:6, alignItems:'flex-start' }}>
-                          <span style={{ fontFamily: fonts.mono, fontSize:11, color: scoreInfo.color, background: scoreInfo.bg, border:`1px solid ${scoreInfo.color}40`, borderRadius:4, padding:'2px 7px', flexShrink:0, marginTop:2 }}>
-                            Level {score}
-                          </span>
-                          <p style={{ margin:0, fontSize:13, color: T.textS, lineHeight:1.55 }}>{q.text}</p>
-                        </div>
-                        <div style={{ display:'flex', gap:8, alignItems:'flex-start', background: T.bgS, borderRadius:6, padding:'10px 12px', marginLeft:0 }}>
-                          <TrendingUp size={13} color={T.accent} style={{ marginTop:2, flexShrink:0 }}/>
-                          <p style={{ margin:0, fontSize:12, color: T.text, lineHeight:1.6 }}>{q.action}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
+                  <div style={{
+                    fontFamily: F.display, fontWeight: 900, fontSize: 36,
+                    color: info.color, letterSpacing: '-0.02em',
+                  }}>
+                    {d.score.toFixed(1)}
+                  </div>
                 </div>
-              );
-            })}
-          </div>
+
+                {lowQs.length === 0 ? (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                    color: '#52b788',
+                  }}>
+                    <Check size={13} /> No critical gaps identified.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 16 }}>
+                    {lowQs.map((q, qi) => {
+                      const qIdx      = d.questions.indexOf(q);
+                      const score     = answers[answerKey(d.index, qIdx)] || 0;
+                      const scoreInfo = getMaturityInfo(score);
+                      return (
+                        <div key={q.id}>
+                          <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 8 }}>
+                            <span style={{
+                              fontFamily: F.display, fontWeight: 900, fontSize: 16,
+                              color: scoreInfo.color, minWidth: 20,
+                              letterSpacing: '-0.01em',
+                            }}>
+                              {score}
+                            </span>
+                            <p style={{
+                              margin: 0, fontFamily: F.body, fontWeight: 300, fontSize: 13,
+                              color: T.textMid, lineHeight: 1.6,
+                            }}>
+                              {q.text}
+                            </p>
+                          </div>
+                          <div style={{
+                            marginLeft: 32,
+                            background: T.bgS, padding: '10px 14px',
+                            borderLeft: `2px solid ${T.accent}`,
+                            display: 'flex', gap: 10, alignItems: 'flex-start',
+                          }}>
+                            <TrendingUp size={12} color={T.accent} style={{ marginTop: 2, flexShrink: 0 }} />
+                            <p style={{
+                              margin: 0, fontFamily: F.body, fontWeight: 300, fontSize: 12,
+                              color: T.text, lineHeight: 1.65,
+                            }}>
+                              {q.action}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
-        {/* ── Score Distribution ── */}
-        <div style={{ ...cardStyle, marginBottom:40, animation:'fadeUp 0.4s 0.25s ease both', opacity:0, animationFillMode:'forwards' }}>
-          <div style={sectionHead}>Score Distribution by Maturity Band</div>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={distData} layout="vertical" margin={{ top:4, right:40, left:80, bottom:4 }}>
-              <XAxis type="number" domain={[0,10]} tick={{ fill: T.textS, fontSize:11, fontFamily: fonts.mono }} tickLine={false} axisLine={false}/>
-              <YAxis type="category" dataKey="label" tick={{ fill: T.textS, fontSize:11, fontFamily: fonts.mono }} tickLine={false} axisLine={false} width={76}/>
-              <Tooltip
-                cursor={{ fill: T.bgS }}
-                contentStyle={{ background: T.card, border:`1px solid ${T.border}`, borderRadius:6, fontFamily: fonts.mono, fontSize:12 }}
-                formatter={(v) => [`${v} domain${v!==1?'s':''}`, 'Count']}
+        {/* ── Score distribution ── */}
+        <div style={{
+          marginBottom: 56,
+          animation: 'slideUp 0.4s 0.25s ease both', opacity: 0, animationFillMode: 'forwards',
+        }}>
+          <div style={{ ...sectionLabel }}>Score Distribution by Maturity Band</div>
+          <ResponsiveContainer width="100%" height={180}>
+            <BarChart data={distData} layout="vertical" margin={{ top: 0, right: 48, left: 88, bottom: 0 }}>
+              <XAxis
+                type="number" domain={[0, 10]}
+                tick={{ fill: T.textS, fontSize: 10, fontFamily: F.body, fontWeight: 300 }}
+                tickLine={false} axisLine={false}
               />
-              <Bar dataKey="count" radius={[0,4,4,0]} maxBarSize={22}>
+              <YAxis
+                type="category" dataKey="label"
+                tick={{ fill: T.textS, fontSize: 11, fontFamily: F.display, fontWeight: 700, letterSpacing: 1 }}
+                tickLine={false} axisLine={false} width={84}
+              />
+              <Tooltip
+                cursor={{ fill: darkMode ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.03)' }}
+                contentStyle={{
+                  background: T.bgCard, border: `1px solid ${T.border}`,
+                  fontFamily: F.body, fontWeight: 300, fontSize: 12,
+                  color: T.text,
+                }}
+                formatter={(v) => [`${v} domain${v !== 1 ? 's' : ''}`, 'Count']}
+              />
+              <Bar dataKey="count" radius={[0, 2, 2, 0]} maxBarSize={18}>
                 {distData.map((entry) => (
-                  <Cell key={entry.label} fill={entry.color}/>
+                  <Cell key={entry.label} fill={entry.color} />
                 ))}
               </Bar>
             </BarChart>
@@ -755,42 +1187,35 @@ export default function GRCMaturityAssessment() {
         </div>
 
         {/* ── Export ── */}
-        <div style={{ animation:'fadeUp 0.4s 0.3s ease both', opacity:0, animationFillMode:'forwards' }}>
-          <div style={sectionHead}>Export Results</div>
-          <div style={{ display:'flex', flexWrap:'wrap', gap:10 }}>
+        <div style={{
+          borderTop: `1px solid ${T.rule}`, paddingTop: 40,
+          animation: 'slideUp 0.4s 0.3s ease both', opacity: 0, animationFillMode: 'forwards',
+        }}>
+          <div style={{ ...sectionLabel }}>Export Results</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginBottom: 16 }}>
             <button
+              className="grc-primary-btn"
               onClick={copySummary}
-              style={{ ...btnPrimary, display:'flex', alignItems:'center', gap:7, minWidth:160 }}
+              style={{ ...btnPrimary, minWidth: 160 }}
             >
-              {copyConfirmed ? <Check size={14}/> : <Copy size={14}/>}
+              {copyConfirmed ? <Check size={14} /> : <Copy size={14} />}
               {copyConfirmed ? 'Copied!' : 'Copy Summary'}
             </button>
-            <button
-              onClick={downloadJSON}
-              style={{ ...btnGhost, display:'flex', alignItems:'center', gap:7 }}
-            >
-              <Download size={14}/> Download JSON
+            <button className="grc-ghost-btn" onClick={downloadJSON} style={btnGhost}>
+              <Download size={14} /> Download JSON
             </button>
-            <button
-              onClick={handleRestart}
-              style={{ ...btnGhost, display:'flex', alignItems:'center', gap:7 }}
-            >
-              <RotateCcw size={14}/> Restart
+            <button className="grc-ghost-btn" onClick={handleRestart} style={btnGhost}>
+              <RotateCcw size={14} /> Restart
             </button>
           </div>
-          <p style={{ fontSize:11, color: T.textS, marginTop:12 }}>
+          <p style={{
+            fontFamily: F.body, fontWeight: 300, fontSize: 11,
+            color: T.textS, margin: 0, letterSpacing: '0.03em',
+          }}>
             JSON export includes all questions, answers, scores, and recommended actions with a timestamp.
           </p>
         </div>
-
       </div>
-
-      <style>{`
-        @keyframes fadeUp {
-          from { opacity:0; transform:translateY(14px); }
-          to   { opacity:1; transform:translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
