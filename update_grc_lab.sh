@@ -8,14 +8,14 @@
 
 set -e
 
-echo "=== 1/7  Removing tracked .DS_Store ==="
+echo "=== 1/6  Removing tracked .DS_Store ==="
 git rm --cached .DS_Store 2>/dev/null || echo ".DS_Store not tracked — skipping"
 
-echo "=== 2/7  Creating Vulnerability Triage Framework folder structure ==="
+echo "=== 2/6  Creating Vulnerability Triage Framework folder structure ==="
 mkdir -p topics/vulnerability-triage-framework/examples
 mkdir -p topics/vulnerability-triage-framework/data
 
-echo "=== 3/7  Writing Vulnerability Triage Framework files ==="
+echo "=== 3/6  Writing Vulnerability Triage Framework files ==="
 
 # --- README.md ---
 cat > topics/vulnerability-triage-framework/README.md << 'READMEEOF'
@@ -540,17 +540,7 @@ cat > topics/vulnerability-triage-framework/data/triage_register.csv << 'REGEOF'
 finding_id,cve_id,plugin_id,affected_host,cvss_base,exposure,exploitability,impact,control_gap,composite_total,critical_trigger,triage_outcome,sla_deadline,remediation_action,remediation_date,confirmation_method,risk_owner,notes,timestamp
 REGEOF
 
-echo "=== 4/7  Creating PCI lab metrics.csv ==="
-mkdir -p topics/pci-dss-azure/data
-
-cat > topics/pci-dss-azure/data/metrics.csv << 'METEOF'
-step,items_tested,manually_labeled,auto_labeled,false_positives,notes,timestamp
-1-baseline,2,2,0,0,"Manual label applied successfully; auto not enabled yet","YYYY-MM-DD"
-2-auto,4,0,4,0,"Auto-labeling applied correctly with PAN + context","YYYY-MM-DD"
-3-dlp,6,0,6,1,"DLP enforced: 2 blocked, 1 override, 1 false positive","YYYY-MM-DD"
-METEOF
-
-echo "=== 5/7  Replacing TPRM risk_scoring_matrix.csv with aligned version ==="
+echo "=== 4/6  Replacing TPRM risk_scoring_matrix.csv with aligned version ==="
 
 cat > topics/third-party-risk-management-iso-iec-27001-2022-itilv4/risk_scoring_matrix.csv << 'RSMEOF'
 control_area,vsq_section,weight,score_0_not_met,score_1_partial,score_2_met,notes
@@ -566,7 +556,7 @@ Software and Platform Security,5 – Platform Security,High,No evidence of vulne
 Monitoring and Ongoing Assurance,6 – Monitoring and Assurance,Medium,No logging or review mechanism,Logging enabled but no regular review or right-to-audit clause,Centralised logging with regular review; contractual right-to-audit clause in place,
 RSMEOF
 
-echo "=== 6/7  Updating top-level README to add Vulnerability Triage Framework ==="
+echo "=== 5/6  Updating top-level README to add Vulnerability Triage Framework ==="
 
 # Check if already added (idempotent)
 if grep -q "vulnerability-triage-framework" README.md; then
@@ -598,7 +588,7 @@ print("  Inserted Vulnerability Triage Framework entry into README.md")
 PYEOF
 fi
 
-echo "=== 7/7  Staging and committing ==="
+echo "=== 6/6  Staging and committing ==="
 
 git add -A
 git status
